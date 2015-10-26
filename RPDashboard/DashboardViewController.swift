@@ -16,6 +16,19 @@ class DashboardViewController: UICollectionViewController {
 
     var refreshTimer: NSTimer?
     
+    let cells: [String] = [
+        "ThreeByThreeCell",
+        "OneByOneCell",
+        "TwoByOneCell",
+        "TwoByTwoCell",
+        "OneByOneCell",
+        "HistoryGraph",
+        "HealthCell",
+        "ThreeByThreeCell",
+        "OneByOneCell",
+        "HistoryGraph"
+    ]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -27,6 +40,8 @@ class DashboardViewController: UICollectionViewController {
         
         self.collectionView?.contentInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
         
+        UINavigationBar.appearance().titleTextAttributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
+        self.title = "Robots & Pencils"
         startTimer()
     }
     
@@ -71,22 +86,15 @@ extension DashboardViewController {
     
     func reuseIdentifier(indexPath: NSIndexPath) -> String {
         
-        switch(indexPath.row % 4) {
-        case 0:
-            return (indexPath.row % 8 == 0) ? "HistoryGraph":"TwoByOneCell"
-        case 1:
-            return (indexPath.row % 8 == 1) ? "HealthCell":"OneByOneCell"
-        case 2:
-            return "OneByTwoCell"
-        case 3:
-            return "TwoByTwoCell"
-        default:
-            return "OneByOneCell"
+        if cells.count > indexPath.row {
+            return cells[indexPath.row]
         }
+        
+        return "OneByOneCell"
     }
     
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 15
+        return cells.count
     }
     
     override func collectionView(collectionView: UICollectionView, canFocusItemAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -106,17 +114,22 @@ extension DashboardViewController {
 
 extension DashboardViewController: RFQuiltLayoutDelegate {
     
-    func blockSizeForItemAtIndexPath(indexPath: NSIndexPath) -> CGSize {
+    func blockSizeForItemAtIndexPath(indexPath: NSIndexPath!) -> CGSize {
+        let reuseIdentifier = self.reuseIdentifier(indexPath)
         
-        switch(indexPath.row % 4) {
-        case 0:
-            return CGSizeMake(2, 1)
-        case 1:
-            return CGSizeMake(1, 1)
-        case 2:
-            return CGSizeMake(1, 2)
-        case 3:
+        switch(reuseIdentifier) {
+        case "TwoByTwoCell":
             return CGSizeMake(2, 2)
+        case "OneByOneCell", "HealthCell":
+            return CGSizeMake(1, 1)
+        case "OneByTwoCell":
+            return CGSizeMake(1, 2)
+        case "TwoByOneCell", "HistoryGraph":
+            return CGSizeMake(2, 1)
+        case "TwoByTwoCell":
+            return CGSizeMake(2, 2)
+        case "ThreeByThreeCell":
+            return CGSizeMake(3, 3)
         default:
             return CGSizeMake(1, 1)
         }
